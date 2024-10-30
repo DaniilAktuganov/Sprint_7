@@ -4,7 +4,7 @@ import ru.yandex.praktikum.sprint7.models.Order;
 
 public class OrderGenerator {
 
-    public static Order randomOrder() {
+    public static Order createDefaultOrder() {
         return new Order()
                 .withFirstName("Naruto")
                 .withLastName("Uchiha")

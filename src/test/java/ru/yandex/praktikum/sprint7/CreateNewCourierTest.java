@@ -2,7 +2,6 @@ package ru.yandex.praktikum.sprint7;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
@@ -22,7 +21,6 @@ public class CreateNewCourierTest {
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru/";
         courierClient = new CourierClient();
     }
 
@@ -30,7 +28,7 @@ public class CreateNewCourierTest {
     @DisplayName("Успешное создание курьера")
     @Description("Проверка, что курьера можно создать с корректными данными")
     public void createNewCourierTest() {
-        courier = randomCourier();
+        courier = createDefaultCourier();
         Response response = courierClient.sendPostRequestV1Courier(courier);
         assertEquals("Неверный статус код", SC_CREATED, response.statusCode());
         response.then().body("ok", equalTo(true));
@@ -40,7 +38,7 @@ public class CreateNewCourierTest {
     @DisplayName("Проверка создания двух одинаковых курьеров")
     @Description("Невозможно создать двух одинаковых курьеров")
     public void createTwoIdenticalCouriersTest() {
-        courier = randomCourier();
+        courier = createDefaultCourier();
         courierClient.sendPostRequestV1Courier(courier);
         Response response = courierClient.sendPostRequestV1Courier(courier);
         assertEquals("Неверный статус код", SC_CONFLICT, response.statusCode());
@@ -51,7 +49,7 @@ public class CreateNewCourierTest {
     @DisplayName("Проверка создания курьера без логина")
     @Description("Невозможно создать курьера без логина")
     public void createNewCourierWithoutLoginTest() {
-        courier = randomCourierWithoutLogin();
+        courier = createDefaultCourierWithoutLogin();
         Response response = courierClient.sendPostRequestV1Courier(courier);
         assertEquals("Неверный статус код", SC_BAD_REQUEST, response.statusCode());
         response.then().body("message", equalTo("Недостаточно данных для создания учетной записи"));
@@ -61,7 +59,7 @@ public class CreateNewCourierTest {
     @DisplayName("Проверка создания курьера без пароля")
     @Description("Невозможно создать курьера без пароля")
     public void createNewCourierWithoutPasswordTest() {
-        courier = randomCourierWithoutPassword();
+        courier = createDefaultCourierWithoutPassword();
         Response response = courierClient.sendPostRequestV1Courier(courier);
         assertEquals("Неверный статус код", SC_BAD_REQUEST, response.statusCode());
         response.then().body("message", equalTo("Недостаточно данных для создания учетной записи"));
@@ -70,5 +68,5 @@ public class CreateNewCourierTest {
     @After
     public void tearDown() {
         courierClient.sendDeleteRequestV1Courier(courier);
-    }
+        }
 }

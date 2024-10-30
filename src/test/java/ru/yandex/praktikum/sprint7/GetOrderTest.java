@@ -2,7 +2,6 @@ package ru.yandex.praktikum.sprint7;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +12,7 @@ import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
-import static ru.yandex.praktikum.sprint7.generators.OrderGenerator.randomOrder;
+import static ru.yandex.praktikum.sprint7.generators.OrderGenerator.createDefaultOrder;
 
 public class GetOrderTest {
 
@@ -21,7 +20,6 @@ public class GetOrderTest {
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru/";
         orderClient = new OrderClient();
     }
 
@@ -29,7 +27,7 @@ public class GetOrderTest {
     @DisplayName("Успешное получение заказа по его номеру")
     @Description("Проверка, что заказ можно получить по его номеру")
     public void getOrderTest() {
-        Order order = randomOrder();
+        Order order = createDefaultOrder();
         orderClient.sendPostRequestV1Orders(order);
         int track = orderClient.getOrderTrack(order);
         Response response = orderClient.sendGetRequestV1OrdersTrack(track);
@@ -50,8 +48,8 @@ public class GetOrderTest {
     @DisplayName("Получение заказа с несуществующим номером")
     @Description("Невозможно получить заказ с несуществующим номером")
     public void getOrderWithInvalidTrackTest() {
-        int invalidTrack = -1;
-        Response response =orderClient.sendGetRequestV1OrdersTrack(invalidTrack);
+        int track = 999999999;
+        Response response =orderClient.sendGetRequestV1OrdersTrack(track);
         assertEquals("Неверный статус код", SC_NOT_FOUND, response.statusCode());
         response.then().body("message", equalTo("Заказ не найден"));
     }

@@ -2,7 +2,6 @@ package ru.yandex.praktikum.sprint7;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +11,7 @@ import ru.yandex.praktikum.sprint7.models.Courier;
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
-import static ru.yandex.praktikum.sprint7.generators.CourierGenerator.randomCourier;
+import static ru.yandex.praktikum.sprint7.generators.CourierGenerator.createDefaultCourier;
 
 public class DeleteCourierTest {
 
@@ -20,7 +19,6 @@ public class DeleteCourierTest {
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru/";
         courierClient = new CourierClient();
     }
 
@@ -28,7 +26,7 @@ public class DeleteCourierTest {
     @DisplayName("Успешное удаление курьера")
     @Description("Проверка, что при вводе существующего id курьер удаляется")
     public void deleteCourier() {
-        Courier courier = randomCourier();
+        Courier courier = createDefaultCourier();
         courierClient.sendPostRequestV1Courier(courier);
         Response response = courierClient.sendDeleteRequestV1Courier(courier);
         assertEquals("Неверный статус код", SC_OK, response.statusCode());

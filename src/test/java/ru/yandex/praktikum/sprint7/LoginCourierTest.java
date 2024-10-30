@@ -3,7 +3,6 @@ package ru.yandex.praktikum.sprint7;
 import io.qameta.allure.Description;
 
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
@@ -24,7 +23,6 @@ public class LoginCourierTest {
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru/";
         courierClient = new CourierClient();
     }
 
@@ -32,7 +30,7 @@ public class LoginCourierTest {
     @DisplayName("Успешный логин курьера в системе")
     @Description("Проверка, что курьер может войти в систему с корректными данными")
     public void loginCourierTest() {
-        courier = randomCourier();
+        courier = createDefaultCourier();
         courierClient.sendPostRequestV1Courier(courier);
         Response loginResponse = courierClient.sendPostRequestV1CourierLogin(courier);
         assertEquals("Неверный статус код", SC_OK, loginResponse.statusCode());
@@ -43,7 +41,7 @@ public class LoginCourierTest {
     @DisplayName("Запрос без логина")
     @Description("Невозможно войти в систему без логина")
     public void loginCourierWithoutLoginTest() {
-        courier = randomCourierWithoutLogin();
+        courier = createDefaultCourierWithoutLogin();
         courierClient.sendPostRequestV1Courier(courier);
         Response loginResponse = courierClient.sendPostRequestV1CourierLogin(courier);
         assertEquals("Неверный статус код", SC_BAD_REQUEST, loginResponse.statusCode());
@@ -54,7 +52,7 @@ public class LoginCourierTest {
     @DisplayName("Запрос без пароля")
     @Description("Невозможно войти в систему без пароля")
     public void loginCourierWithoutPasswordTest() {
-        courier = randomCourierWithoutPassword();
+        courier = createDefaultCourierWithoutPassword();
         courierClient.sendPostRequestV1Courier(courier);
         Response loginResponse = courierClient.sendPostRequestV1CourierLogin(courier);
         assertEquals("Неверный статус код", SC_BAD_REQUEST, loginResponse.statusCode());
@@ -65,7 +63,7 @@ public class LoginCourierTest {
     @Test
     @DisplayName("Запрос с несуществующим логином")
     public void loginWithInvalidLoginTest() {
-        courier = randomCourier();
+        courier = createDefaultCourier();
         courierClient.sendPostRequestV1Courier(courier);
         Response loginResponse = courierClient.sendPostRequestV1CourierLoginWithInvalidLogin(courier);
         assertEquals("Неверный статус код", SC_NOT_FOUND, loginResponse.statusCode());
@@ -75,7 +73,7 @@ public class LoginCourierTest {
     @Test
     @DisplayName("Запрос с несуществующим паролем")
     public void loginWithInvalidPasswordTest() {
-        courier = randomCourier();
+        courier = createDefaultCourier();
         courierClient.sendPostRequestV1Courier(courier);
         Response loginResponse = courierClient.sendPostRequestV1CourierLoginWithInvalidPassword(courier);
         assertEquals("Неверный статус код", SC_NOT_FOUND, loginResponse.statusCode());
